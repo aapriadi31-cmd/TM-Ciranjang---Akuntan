@@ -45,3 +45,56 @@ function renderReport(type) {
 
     container.innerHTML = html;
 }
+function updateUI() {
+    const list = document.getElementById('transaction-list');
+    const balanceDisplay = document.getElementById('total-balance');
+    list.innerHTML = '';
+
+    let total = 0;
+    // Kita tambahkan parameter 'index' untuk menandai baris mana yang akan dihapus
+    transactions.forEach((t, index) => {
+        total += t.amount;
+        const li = document.createElement('li');
+        li.style.borderLeft = t.amount < 0 ? '4px solid #ff0055' : '4px solid #00ff88';
+        
+        li.innerHTML = `
+            <div style="flex-grow: 1;">
+                <strong>${t.desc}</strong><br>
+                <small style="color: #888;">${t.date || ''}</small>
+            </div>
+            <div style="text-align: right; display: flex; align-items: center;">
+                <span style="color: ${t.amount < 0 ? '#ff0055' : '#00ff88'}; margin-right: 15px;">
+                    ${t.amount < 0 ? '-' : '+'} Rp ${Math.abs(t.amount).toLocaleString()}
+                </span>
+                <button onclick="deleteTransaction(${index})" 
+                        style="background: none; border: none; color: #ff0055; cursor: pointer; font-size: 18px;">
+                    🗑️
+                </button>
+            </div>
+        `;
+        list.appendChild(li);
+    });
+
+    balanceDisplay.innerText = `Rp ${total.toLocaleString()}`;
+    balanceDisplay.style.color = total < 0 ? '#ff0055' : '#00ff88';
+}
+function deleteTransaction(index) {
+    if (confirm('Hapus transaksi ini?')) {
+        // Menghapus 1 item berdasarkan urutan (index)
+        transactions.splice(index, 1);
+        
+        // Simpan perubahan ke penyimpanan browser
+        saveData();
+        
+        // Perbarui tampilan layar
+        updateUI();
+        
+        // Jika sedang membuka halaman laporan, perbarui juga datanya
+        const activeReport = document.querySelector('.page.active').id;
+        if (activeReport === 'page-laporan') {
+            // Kita asumsikan fungsi renderReport terakhir dipanggil untuk tipe tertentu
+            // Kamu bisa memanggil renderReport kembali jika perlu
+            renderReport('jurnal'); 
+        }
+    }
+}
