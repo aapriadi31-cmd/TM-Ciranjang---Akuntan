@@ -21,7 +21,17 @@
                     <h2 id="total-balance">Rp 0</h2>
                 </div>
                 <div class="input-section">
-                    <input type="text" id="desc" placeholder="Keterangan">
+                    <input type="text" id="desc" placeholder="Keterangan"<div class="input-section">
+    <input type="text" id="desc" placeholder="Keterangan (misal: Bahan Buket)">
+    <input type="date" id="transaction-date"> 
+    <input type="number" id="amount" placeholder="Nominal (Rp)">
+    <select id="type">
+        <option value="income">Pemasukan</option>
+        <option value="expense">Pengeluaran</option>
+    </select>
+    <button id="btn-simpan" class="neon-btn">Simpan ke Cloud</button>
+</div>
+
                     <input type="number" id="amount" placeholder="Nominal (Rp)">
                     <select id="type">
                         <option value="income">Pemasukan</option>
