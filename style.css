@@ -1,0 +1,67 @@
+body {
+    background-color: #0d0d0d;
+    color: #fff;
+    font-family: 'Rajdhani', sans-serif;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+}
+
+.container {
+    width: 100%;
+    max-width: 400px;
+    padding: 20px;
+}
+
+.neon-text {
+    font-family: 'Orbitron', sans-serif;
+    text-align: center;
+    color: #0ff;
+    text-shadow: 0 0 10px #0ff, 0 0 20px #0ff;
+}
+
+.balance-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid #0ff;
+    border-radius: 15px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 0 15px rgba(0, 255, 255, 0.2);
+    margin-bottom: 20px;
+}
+
+input, select, .neon-btn {
+    width: 100%;
+    padding: 12px;
+    margin: 8px 0;
+    border-radius: 8px;
+    border: 1px solid #333;
+    background: #1a1a1a;
+    color: #fff;
+    box-sizing: border-box;
+}
+
+.neon-btn {
+    background: transparent;
+    border: 1px solid #f0f;
+    color: #f0f;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.neon-btn:hover {
+    background: #f0f;
+    color: #000;
+    box-shadow: 0 0 20px #f0f;
+}
+
+ul { list-style: none; padding: 0; }
+li {
+    background: #1a1a1a;
+    margin: 5px 0;
+    padding: 10px;
+    border-left: 4px solid #0ff;
+    display: flex;
+    justify-content: space-between;
+}

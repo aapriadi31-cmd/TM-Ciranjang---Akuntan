@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neon Accounting</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@300;500&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1 class="neon-text">NEON<span>ACC</span></h1>
+        </header>
+
+        <div class="balance-card">
+            <p>Total Saldo</p>
+            <h2 id="total-balance">Rp 0</h2>
+        </div>
+
+        <section class="input-section">
+            <input type="text" id="desc" placeholder="Keterangan (misal: Isian Buket)">
+            <input type="number" id="amount" placeholder="Nominal (Rp)">
+            <select id="type">
+                <option value="income">Pemasukan</option>
+                <option value="expense">Pengeluaran</option>
+            </select>
+            <button onclick="addTransaction()" class="neon-btn">Tambah Transaksi</button>
+        </section>
+
+        <section class="history">
+            <h3>Riwayat Transaksi</h3>
+            <ul id="transaction-list"></ul>
+        </section>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js');
+        }
+    </script>
+</body>
+</html>
