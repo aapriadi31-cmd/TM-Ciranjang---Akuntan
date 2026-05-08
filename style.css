@@ -5,63 +5,42 @@ body {
     margin: 0;
     display: flex;
     justify-content: center;
+    padding-bottom: 80px;
 }
-
-.container {
-    width: 100%;
-    max-width: 400px;
-    padding: 20px;
-}
-
-.neon-text {
-    font-family: 'Orbitron', sans-serif;
-    text-align: center;
-    color: #0ff;
-    text-shadow: 0 0 10px #0ff, 0 0 20px #0ff;
-}
-
+.container { width: 100%; max-width: 450px; padding: 20px; }
+.neon-text { font-family: 'Orbitron', sans-serif; text-align: center; color: #0ff; text-shadow: 0 0 10px #0ff; }
 .balance-card {
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid #0ff;
     border-radius: 15px;
     padding: 20px;
     text-align: center;
-    box-shadow: 0 0 15px rgba(0, 255, 255, 0.2);
     margin-bottom: 20px;
 }
-
 input, select, .neon-btn {
-    width: 100%;
-    padding: 12px;
-    margin: 8px 0;
-    border-radius: 8px;
-    border: 1px solid #333;
-    background: #1a1a1a;
-    color: #fff;
-    box-sizing: border-box;
+    width: 100%; padding: 12px; margin: 8px 0;
+    background: #1a1a1a; border: 1px solid #333; color: #fff; border-radius: 8px;
 }
+.neon-btn { border-color: #f0f; color: #f0f; font-weight: bold; cursor: pointer; }
+.neon-btn:hover { background: #f0f; color: #000; box-shadow: 0 0 15px #f0f; }
 
-.neon-btn {
-    background: transparent;
-    border: 1px solid #f0f;
-    color: #f0f;
-    font-weight: bold;
-    cursor: pointer;
-    transition: 0.3s;
+.bottom-nav {
+    position: fixed; bottom: 0; left: 0; width: 100%;
+    background: #1a1a1a; display: flex; justify-content: space-around;
+    padding: 15px 0; border-top: 1px solid #0ff;
 }
+.bottom-nav button { background: none; border: none; color: #888; font-size: 11px; cursor: pointer; }
+.bottom-nav button:hover { color: #0ff; }
 
-.neon-btn:hover {
-    background: #f0f;
-    color: #000;
-    box-shadow: 0 0 20px #f0f;
-}
+.page { display: none; }
+.page.active { display: block; }
 
-ul { list-style: none; padding: 0; }
-li {
-    background: #1a1a1a;
-    margin: 5px 0;
-    padding: 10px;
-    border-left: 4px solid #0ff;
-    display: flex;
-    justify-content: space-between;
+table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+th, td { padding: 10px; border-bottom: 1px solid #333; text-align: left; }
+.text-right { text-align: right; }
+
+.transaction-item {
+    background: #1a1a1a; margin: 8px 0; padding: 10px;
+    display: flex; justify-content: space-between; align-items: center;
 }
+.delete-btn { background: none; border: none; font-size: 18px; cursor: pointer; }
