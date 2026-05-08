@@ -1,3 +1,13 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neon Accounting Cloud</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@300;500&display=swap" rel="stylesheet">
+</head>
 <body>
     <div class="container">
         <header>
@@ -7,7 +17,7 @@
         <main id="main-content">
             <section id="page-transaksi" class="page active">
                 <div class="balance-card">
-                    <p>Total Saldo</p>
+                    <p>Total Saldo Cloud</p>
                     <h2 id="total-balance">Rp 0</h2>
                 </div>
                 <div class="input-section">
@@ -17,15 +27,14 @@
                         <option value="income">Pemasukan</option>
                         <option value="expense">Pengeluaran</option>
                     </select>
-                    <button onclick="addTransaction()" class="neon-btn">Simpan Transaksi</button>
+                    <button id="btn-simpan" class="neon-btn">Simpan ke Cloud</button>
                 </div>
                 <ul id="transaction-list"></ul>
             </section>
 
             <section id="page-laporan" class="page">
                 <h3 class="neon-text-small">LAPORAN KEUANGAN</h3>
-                <div id="report-container">
-                    </div>
+                <div id="report-container"></div>
             </section>
         </main>
 
@@ -35,28 +44,33 @@
             <button onclick="showPage('laporan', 'labarugi')">📊 Laba Rugi</button>
             <button onclick="showPage('laporan', 'neraca')">⚖️ Neraca</button>
         </nav>
-    </div><script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-  import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, deleteDoc, doc } 
-    from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    </div>
 
-  // PASTE FIREBASE CONFIG KAMU DI SINI
-  const firebaseConfig = {
-    apiKey: "AIza...",
-    authDomain: "neonacc-moments.firebaseapp.com",
-    projectId: "neonacc-moments",
-    storageBucket: "neonacc-moments.appspot.com",
-    messagingSenderId: "...",
-    appId: "..."
-  };
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, deleteDoc, doc } 
+            from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
+        // KONFIGURASI FIREBASE KAMU
+        const firebaseConfig = {
+            apiKey: "MASUKKAN_API_KEY_KAMU",
+            authDomain: "PROYEK-KAMU.firebaseapp.com",
+            projectId: "PROYEK-KAMU",
+            storageBucket: "PROYEK-KAMU.appspot.com",
+            messagingSenderId: "ID-SENDER",
+            appId: "ID-APP"
+        };
 
-  // Kirim database ke window agar bisa dipakai di script.js
-  window.db = db;
-  window.fs = { collection, addDoc, onSnapshot, query, orderBy, deleteDoc, doc };
-</script>
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
 
-    <script src="script.js"></script>
+        // Kirim ke window agar script.js bisa akses
+        window.db = db;
+        window.fs = { collection, addDoc, onSnapshot, query, orderBy, deleteDoc, doc };
+        
+        // Inisialisasi aplikasi setelah Firebase siap
+        import { initApp } from "./script.js";
+        initApp();
+    </script>
 </body>
+</html>
