@@ -3,8 +3,7 @@ let transactions = [];
 export function initApp() {
     listenToCloud();
     document.getElementById('btn-simpan').addEventListener('click', addTransaction);
-    const today = new Date().toISOString().split('T')[0];
-    document.getElementById('transaction-date').value = today;
+    document.getElementById('transaction-date').value = new Date().toISOString().split('T')[0];
 }
 
 function listenToCloud() {
@@ -27,34 +26,30 @@ async function addTransaction() {
     const amount = parseFloat(document.getElementById('amount').value);
     const type = document.getElementById('type').value;
 
-    if (!desc || isNaN(amount) || !date) return alert('Lengkapi semua data!');
+    if (!desc || isNaN(amount) || !date) return alert('Data tidak lengkap!');
 
     try {
         await fs.addDoc(fs.collection(db, "transactions"), {
             id: Date.now(),
-            desc: desc,
-            date: date,
+            desc, date,
             amount: type === 'expense' ? -Math.abs(amount) : Math.abs(amount)
         });
         document.getElementById('desc').value = '';
         document.getElementById('amount').value = '';
-    } catch (e) {
-        alert("Gagal koneksi Cloud: " + e);
-    }
+    } catch (e) { alert("Gagal: " + e); }
 }
 
-window.deleteTransaction = async function(docId) {
-    if (confirm('Hapus permanen dari cloud?')) {
-        const { db, fs } = window;
-        await fs.deleteDoc(fs.doc(db, "transactions", docId));
+window.deleteTransaction = async (docId) => {
+    if (confirm('Hapus data?')) {
+        await window.fs.deleteDoc(window.fs.doc(window.db, "transactions", docId));
     }
-}
+};
 
-window.showPage = function(pageId, reportType = '') {
+window.showPage = (pageId, reportType = '') => {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.getElementById('page-' + pageId).classList.add('active');
     if (reportType) renderReport(reportType);
-}
+};
 
 function updateUI() {
     const list = document.getElementById('transaction-list');
@@ -70,10 +65,8 @@ function updateUI() {
         li.innerHTML = `
             <div style="flex:1"><strong>${t.desc}</strong><br><small>${t.date}</small></div>
             <div style="display:flex; align-items:center">
-                <span style="color:${t.amount < 0 ? '#ff0055' : '#00ff88'}">
-                    Rp ${Math.abs(t.amount).toLocaleString()}
-                </span>
-                <button onclick="deleteTransaction('${t.docId}')" class="delete-btn">🗑️</button>
+                <span style="color:${t.amount < 0 ? '#ff0055' : '#00ff88'}">Rp ${Math.abs(t.amount).toLocaleString()}</span>
+                <button onclick="deleteTransaction('${t.docId}')" style="background:none; border:none; margin-left:10px">🗑️</button>
             </div>`;
         list.appendChild(li);
     });
@@ -84,30 +77,22 @@ function renderReport(type) {
     const container = document.getElementById('report-container');
     const title = document.getElementById('report-title');
     let html = '';
-
-    const sortedData = [...transactions].sort((a,b) => new Date(a.date) - new Date(b.date));
+    const sorted = [...transactions].sort((a,b) => new Date(a.date) - new Date(b.date));
 
     if (type === 'jurnal') {
-        title.innerText = "JURNAL TRANSAKSI";
+        title.innerText = "JURNAL";
         html = `<table><tr><th>Tgl</th><th>Ket</th><th>Nominal</th></tr>`;
-        sortedData.forEach(t => {
-            html += `<tr><td>${t.date}</td><td>${t.desc}</td><td style="text-align:right">${t.amount.toLocaleString()}</td></tr>`;
-        });
+        sorted.forEach(t => html += `<tr><td>${t.date}</td><td>${t.desc}</td><td>${t.amount.toLocaleString()}</td></tr>`);
         html += `</table>`;
     } else if (type === 'labarugi') {
-        title.innerText = "LABA RUGI (PROFIT/LOSS)";
+        title.innerText = "LABA RUGI";
         const pendapatan = transactions.filter(t => t.amount > 0).reduce((s,t) => s + t.amount, 0);
         const beban = transactions.filter(t => t.amount < 0).reduce((s,t) => s + Math.abs(t.amount), 0);
-        html = `<div class="balance-card" style="border-color:#f0f">
-            <p>Pendapatan: Rp ${pendapatan.toLocaleString()}</p>
-            <p>Beban/HPP: Rp ${beban.toLocaleString()}</p>
-            <hr><h3 style="color:#0ff">LABA BERSIH: Rp ${(pendapatan - beban).toLocaleString()}</h3>
-        </div>`;
+        html = `<div class="balance-card"><h3>Laba Bersih: Rp ${(pendapatan - beban).toLocaleString()}</h3></div>`;
     } else if (type === 'neraca') {
-        title.innerText = "NERACA (POSISI KEUANGAN)";
+        title.innerText = "NERACA";
         const kas = transactions.reduce((s,t) => s + t.amount, 0);
-        html = `<table><tr><th colspan="2">AKTIVA</th></tr><tr><td>Kas & Bank</td><td style="text-align:right">Rp ${kas.toLocaleString()}</td></tr>
-                <tr><th colspan="2">PASIVA</th></tr><tr><td>Modal + Laba</td><td style="text-align:right">Rp ${kas.toLocaleString()}</td></tr></table>`;
+        html = `<table><tr><td>Aset (Kas)</td><td>Rp ${kas.toLocaleString()}</td></tr><tr><td>Pasiva (Modal)</td><td>Rp ${kas.toLocaleString()}</td></tr></table>`;
     }
     container.innerHTML = html;
 }
