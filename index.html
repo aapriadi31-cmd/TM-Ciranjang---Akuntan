@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Neon Acc Cloud</title>
+    <title>Neon Acc - TM Ciranjang</title>
     <link rel="stylesheet" href="style.css">
     <link rel="manifest" href="manifest.json">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@300;500&display=swap" rel="stylesheet">
@@ -15,16 +15,16 @@
         <main id="main-content">
             <section id="page-transaksi" class="page active">
                 <div class="balance-card">
-                    <p>Total Kas & Bank</p>
+                    <p>Total Kas & Bank (Cloud)</p>
                     <h2 id="total-balance">Rp 0</h2>
                 </div>
                 <div class="input-section">
-                    <input type="text" id="desc" placeholder="Keterangan">
+                    <input type="text" id="desc" placeholder="Keterangan Transaksi">
                     <input type="date" id="transaction-date">
                     <input type="number" id="amount" placeholder="Nominal (Rp)">
                     <select id="type">
-                        <option value="income">Pemasukan</option>
-                        <option value="expense">Pengeluaran</option>
+                        <option value="income">Pemasukan (Pendapatan)</option>
+                        <option value="expense">Pengeluaran (HPP/Beban)</option>
                     </select>
                     <button id="btn-simpan" class="neon-btn">SIMPAN KE CLOUD</button>
                 </div>
@@ -49,22 +49,113 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
+        // === GANTI CONFIG DI BAWAH INI DENGAN MILIKMU ===
         const firebaseConfig = {
-            apiKey: "MASUKKAN_MILIK_MU",
-            authDomain: "MASUKKAN_MILIK_MU",
-            projectId: "MASUKKAN_MILIK_MU",
-            storageBucket: "MASUKKAN_MILIK_MU",
-            messagingSenderId: "MASUKKAN_MILIK_MU",
-            appId: "MASUKKAN_MILIK_MU"
+            apiKey: "ISI_API_KEY_KAMU",
+            authDomain: "PROYEK-KAMU.firebaseapp.com",
+            projectId: "PROYEK-KAMU",
+            storageBucket: "PROYEK-KAMU.appspot.com",
+            messagingSenderId: "ID-KAMU",
+            appId: "ID-APP-KAMU"
         };
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
-        window.db = db;
-        window.fs = { collection, addDoc, onSnapshot, query, orderBy, deleteDoc, doc };
-        
-        import { initApp } from "./script.js";
-        initApp();
+        let transactions = [];
+
+        // Inisialisasi Tanggal & Event Listener
+        document.getElementById('transaction-date').value = new Date().toISOString().split('T')[0];
+        document.getElementById('btn-simpan').addEventListener('click', addTransaction);
+
+        // Fungsi Ambil Data Real-time
+        const q = query(collection(db, "transactions"), orderBy("date", "desc"));
+        onSnapshot(q, (snapshot) => {
+            transactions = [];
+            snapshot.forEach((doc) => {
+                transactions.push({ docId: doc.id, ...doc.data() });
+            });
+            updateUI();
+        });
+
+        async function addTransaction() {
+            const desc = document.getElementById('desc').value;
+            const date = document.getElementById('transaction-date').value;
+            const amount = parseFloat(document.getElementById('amount').value);
+            const type = document.getElementById('type').value;
+
+            if (!desc || isNaN(amount)) return alert("Data tidak lengkap!");
+
+            try {
+                await addDoc(collection(db, "transactions"), {
+                    desc, date,
+                    amount: type === 'expense' ? -Math.abs(amount) : Math.abs(amount),
+                    timestamp: Date.now()
+                });
+                document.getElementById('desc').value = '';
+                document.getElementById('amount').value = '';
+            } catch (e) { alert("Gagal Simpan: " + e.message); }
+        }
+
+        window.deleteTransaction = async (docId) => {
+            if (confirm("Hapus data?")) await deleteDoc(doc(db, "transactions", docId));
+        };
+
+        window.showPage = (pageId, reportType = '') => {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById('page-' + pageId).classList.add('active');
+            if (reportType) renderReport(reportType);
+        };
+
+        function updateUI() {
+            const list = document.getElementById('transaction-list');
+            const balanceDisplay = document.getElementById('total-balance');
+            let total = 0;
+            list.innerHTML = '';
+
+            transactions.forEach((t) => {
+                total += t.amount;
+                const li = document.createElement('li');
+                li.className = "transaction-item";
+                li.style.borderLeft = t.amount < 0 ? '4px solid #ff0055' : '4px solid #00ff88';
+                li.innerHTML = `
+                    <div style="flex:1"><strong>${t.desc}</strong><br><small>${t.date}</small></div>
+                    <div style="display:flex; align-items:center">
+                        <span style="color:${t.amount < 0 ? '#ff0055' : '#00ff88'}">Rp ${Math.abs(t.amount).toLocaleString()}</span>
+                        <button onclick="deleteTransaction('${t.docId}')" style="background:none; border:none; margin-left:10px">🗑️</button>
+                    </div>`;
+                list.appendChild(li);
+            });
+            balanceDisplay.innerText = `Rp ${total.toLocaleString()}`;
+        }
+
+        function renderReport(type) {
+            const container = document.getElementById('report-container');
+            const title = document.getElementById('report-title');
+            let html = '';
+            const sorted = [...transactions].sort((a,b) => new Date(a.date) - new Date(b.date));
+
+            if (type === 'jurnal') {
+                title.innerText = "JURNAL UMUM";
+                html = `<table><tr><th>Tgl</th><th>Ket</th><th>Nominal</th></tr>`;
+                sorted.forEach(t => html += `<tr><td>${t.date}</td><td>${t.desc}</td><td style="text-align:right">${t.amount.toLocaleString()}</td></tr>`);
+                html += `</table>`;
+            } else if (type === 'labarugi') {
+                title.innerText = "LABA RUGI";
+                const pendapatan = transactions.filter(t => t.amount > 0).reduce((s,t) => s + t.amount, 0);
+                const beban = transactions.filter(t => t.amount < 0).reduce((s,t) => s + Math.abs(t.amount), 0);
+                html = `<div class="balance-card" style="border-color:#f0f">
+                    <p>Pendapatan: Rp ${pendapatan.toLocaleString()}</p>
+                    <p>Beban Usaha: Rp ${beban.toLocaleString()}</p>
+                    <hr><h3>LABA BERSIH: Rp ${(pendapatan - beban).toLocaleString()}</h3>
+                </div>`;
+            } else if (type === 'neraca') {
+                title.innerText = "NERACA";
+                const kas = transactions.reduce((s,t) => s + t.amount, 0);
+                html = `<table><tr><td>AKTIVA (Kas)</td><td style="text-align:right">Rp ${kas.toLocaleString()}</td></tr>
+                        <tr><td>PASIVA (Modal)</td><td style="text-align:right">Rp ${kas.toLocaleString()}</td></tr></table>`;
+            }
+            container.innerHTML = html;
+        }
     </script>
 </body>
 </html>
