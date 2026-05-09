@@ -1,32 +1,13 @@
-body {
-    background-color: #0d0d0d; color: #fff;
-    font-family: 'Rajdhani', sans-serif; margin: 0;
-    padding-bottom: 90px; display: flex; justify-content: center;
-}
-.container { width: 100%; max-width: 480px; padding: 20px; }
+body { background: #0d0d0d; color: #fff; font-family: 'Rajdhani', sans-serif; margin: 0; padding-bottom: 80px; display: flex; justify-content: center; }
+.container { width: 100%; max-width: 450px; padding: 20px; }
 .neon-text { font-family: 'Orbitron', sans-serif; text-align: center; color: #0ff; text-shadow: 0 0 10px #0ff; }
-.balance-card {
-    background: rgba(255, 255, 255, 0.05); border: 1px solid #0ff;
-    border-radius: 15px; padding: 20px; text-align: center; margin-bottom: 20px;
-}
-input, select, .neon-btn {
-    width: 100%; padding: 12px; margin: 8px 0;
-    background: #1a1a1a; border: 1px solid #333; color: #fff; border-radius: 8px; box-sizing: border-box;
-}
+.balance-card { background: rgba(255,255,255,0.05); border: 1px solid #0ff; border-radius: 15px; padding: 20px; text-align: center; margin-bottom: 20px; }
+input, select, .neon-btn { width: 100%; padding: 12px; margin: 8px 0; background: #1a1a1a; border: 1px solid #333; color: #fff; border-radius: 8px; box-sizing: border-box; }
 .neon-btn { border-color: #f0f; color: #f0f; font-weight: bold; cursor: pointer; }
-.bottom-nav {
-    position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
-    width: 100%; max-width: 480px; background: #1a1a1a;
-    display: flex; justify-content: space-around; padding: 15px 0; border-top: 1px solid #0ff;
-}
-.bottom-nav button { background: none; border: none; color: #888; font-size: 10px; cursor: pointer; }
-.bottom-nav button:hover { color: #0ff; }
+.bottom-nav { position: fixed; bottom: 0; width: 100%; max-width: 450px; background: #1a1a1a; display: flex; justify-content: space-around; padding: 15px 0; border-top: 1px solid #0ff; }
+.bottom-nav button { background: none; border: none; color: #888; cursor: pointer; font-size: 11px; }
 .page { display: none; }
 .page.active { display: block; }
-.transaction-item {
-    background: #1a1a1a; margin: 10px 0; padding: 12px;
-    display: flex; justify-content: space-between; align-items: center; border-radius: 5px;
-}
-.delete-btn { background: none; border: none; font-size: 18px; cursor: pointer; color: #ff0055; }
-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-th, td { padding: 12px; border-bottom: 1px solid #333; font-size: 14px; }
+.transaction-item { background: #1a1a1a; margin: 8px 0; padding: 10px; display: flex; justify-content: space-between; align-items: center; }
+table { width: 100%; border-collapse: collapse; }
+th, td { padding: 10px; border-bottom: 1px solid #333; text-align: left; font-size: 14px; }
