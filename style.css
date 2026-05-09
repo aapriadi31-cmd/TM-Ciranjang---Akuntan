@@ -1,74 +1,88 @@
-.transaction-section {
-    margin-top: 50px;
+:root {
+    --bg-color: #0a0a0b;
+    --card-bg: #141417;
+    --neon-cyan: #00f3ff;
+    --neon-pink: #ff00ff;
+    --neon-green: #39ff14;
+    --text-dim: #94a3b8;
 }
 
-.neon-text-small {
-    font-size: 1.2rem;
-    color: var(--neon-cyan);
-    text-shadow: 0 0 5px var(--neon-cyan);
-    margin-bottom: 20px;
+body {
+    background-color: var(--bg-color);
+    color: #ffffff;
+    font-family: 'Inter', -apple-system, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
 }
 
-.table-container {
+.container {
+    width: 95%;
+    max-width: 1100px;
+    padding: 40px 20px;
+}
+
+/* Header & Animasi */
+header { text-align: center; margin-bottom: 50px; }
+.neon-text {
+    font-size: 2.2rem;
+    text-shadow: 0 0 10px var(--neon-cyan), 0 0 20px var(--neon-cyan);
+    letter-spacing: 3px;
+    margin-bottom: 5px;
+}
+.flicker { animation: blink 3s infinite; }
+@keyframes blink {
+    0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { opacity: 1; }
+    20%, 22%, 24%, 55% { opacity: 0.4; }
+}
+.subtitle { color: var(--text-dim); font-size: 0.9rem; }
+
+/* Dashboard Cards */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 25px;
+    margin-bottom: 50px;
+}
+.card {
     background: var(--card-bg);
-    border-radius: 15px;
-    padding: 10px;
-    border: 1px solid #333;
-    overflow-x: auto;
+    padding: 30px;
+    border-radius: 20px;
+    transition: 0.3s;
+    position: relative;
 }
+.card:hover { transform: translateY(-10px); }
+.card h3 { font-size: 0.8rem; color: var(--text-dim); margin: 0; letter-spacing: 1px; }
+.amount { font-size: 2.2rem; font-weight: 800; margin: 15px 0; }
 
-table {
-    width: 100%;
-    border-collapse: collapse;
-    text-align: left;
-}
+.neon-border-cyan { border-left: 5px solid var(--neon-cyan); box-shadow: 0 10px 30px rgba(0, 243, 255, 0.1); }
+.cyan-glow { color: var(--neon-cyan); text-shadow: 0 0 15px var(--neon-cyan); }
+.neon-border-pink { border-left: 5px solid var(--neon-pink); box-shadow: 0 10px 30px rgba(255, 0, 255, 0.1); }
+.pink-glow { color: var(--neon-pink); text-shadow: 0 0 15px var(--neon-pink); }
+.neon-border-green { border-left: 5px solid var(--neon-green); box-shadow: 0 10px 30px rgba(57, 255, 20, 0.1); }
+.green-glow { color: var(--neon-green); text-shadow: 0 0 15px var(--neon-green); }
 
-th {
-    padding: 15px;
-    border-bottom: 2px solid #333;
-    color: var(--neon-cyan);
-    font-size: 0.85rem;
-    text-transform: uppercase;
-}
+/* Table Section */
+.transaction-section { background: var(--card-bg); padding: 25px; border-radius: 20px; border: 1px solid #222; }
+.section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+.neon-text-small { font-size: 1.1rem; color: var(--neon-cyan); text-shadow: 0 0 5px var(--neon-cyan); }
+.table-container { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; min-width: 600px; }
+th { text-align: left; padding: 15px; color: var(--text-dim); font-size: 0.8rem; border-bottom: 1px solid #333; }
+td { padding: 18px 15px; border-bottom: 1px solid #1f1f1f; font-size: 0.9rem; }
+tr:hover { background: rgba(255,255,255,0.02); }
 
-td {
-    padding: 15px;
-    border-bottom: 1px solid #222;
-    font-size: 0.9rem;
-    color: #ddd;
-}
+/* Badges */
+.badge { padding: 4px 10px; border-radius: 6px; font-size: 0.7rem; font-weight: bold; margin-right: 5px; }
+.debit { background: rgba(57, 255, 20, 0.1); color: var(--neon-green); border: 1px solid var(--neon-green); }
+.kredit { background: rgba(255, 0, 255, 0.1); color: var(--neon-pink); border: 1px solid var(--neon-pink); }
 
-tr:hover {
-    background: rgba(0, 243, 255, 0.05);
-    box-shadow: inset 0 0 10px rgba(0, 243, 255, 0.1);
+/* Floating Button */
+.fab-btn {
+    position: fixed; bottom: 30px; right: 30px; width: 65px; height: 65px;
+    background: var(--neon-cyan); border: none; border-radius: 50%;
+    font-size: 35px; font-weight: bold; cursor: pointer;
+    box-shadow: 0 0 25px var(--neon-cyan); transition: 0.4s;
 }
-
-/* Badge untuk Akun */
-.badge {
-    padding: 4px 8px;
-    border-radius: 5px;
-    font-size: 0.75rem;
-    font-weight: bold;
-}
-
-.debit {
-    background: rgba(57, 255, 20, 0.1);
-    color: var(--neon-green);
-    border: 1px solid var(--neon-green);
-}
-
-.kredit {
-    background: rgba(255, 0, 255, 0.1);
-    color: var(--neon-pink);
-    border: 1px solid var(--neon-pink);
-}
-
-.amount-table {
-    font-weight: bold;
-    color: #fff;
-}
-
-.fab-btn:hover {
-    transform: scale(1.1);
-    box-shadow: 0 0 30px var(--neon-cyan);
-}
+.fab-btn:hover { transform: rotate(90deg) scale(1.1); }
