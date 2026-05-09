@@ -5,69 +5,71 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Neon Acc - The Moments</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="manifest" href="manifest.json">
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 </head>
 <body>
     <div class="container">
         <header>
             <h1 class="neon-text">THE MOMENTS <span class="flicker">CIRANJANG</span></h1>
-            <p class="subtitle">Jl. Raya Bandung No.16 • Accounting System</p>
+            <p class="subtitle" id="business-address">Memuat Alamat...</p>
         </header>
 
         <div class="dashboard-grid">
             <div class="card neon-border-cyan">
-                <h3>TOTAL PENJUALAN</h3>
-                <p class="amount cyan-glow">Rp 1.342.000</p>
-                <span class="status">↑ Periode Mei 2026</span>
+                <h3>PENJUALAN PRODUK</h3>
+                <p class="amount cyan-glow" id="stat-sales">Rp 0</p>
             </div>
-
             <div class="card neon-border-pink">
                 <h3>TOTAL BEBAN</h3>
-                <p class="amount pink-glow">Rp 345.500</p>
-                <span class="status">Beban Operasional</span>
+                <p class="amount pink-glow" id="stat-expense">Rp 0</p>
             </div>
-
             <div class="card neon-border-green">
                 <h3>LABA BERSIH</h3>
-                <p class="amount green-glow">Rp 996.500</p>
-                <span class="status">Margin Laba 47.28%</span>
+                <p class="amount green-glow" id="stat-profit">Rp 0</p>
             </div>
         </div>
 
         <section class="transaction-section">
             <div class="section-header">
-                <h2 class="neon-text-small">JURNAL TRANSAKSI</h2>
-                <button class="btn-outline">Lihat Semua</button>
+                <h2 class="neon-text-small">JURNAL TERBARU</h2>
             </div>
             <div class="table-container">
-                <table>
+                <table id="journal-table">
                     <thead>
                         <tr>
                             <th>Tanggal</th>
                             <th>Keterangan</th>
-                            <th>Debit / Kredit</th>
+                            <th>Akun (D/K)</th>
                             <th>Nominal</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr>
-                            <td>07/05/26</td>
-                            <td>Tagihan Listrik & Wifi</td>
-                            <td><span class="badge debit">B. Listrik</span> <span class="badge kredit">BCA</span></td>
-                            <td class="amount-table">Rp 215.500</td>
-                        </tr>
-                        <tr>
-                            <td>08/05/26</td>
-                            <td>Pendapatan non-tunai</td>
-                            <td><span class="badge debit">BCA</span> <span class="badge kredit">Penjualan</span></td>
-                            <td class="amount-table">Rp 200.000</td>
-                        </tr>
-                    </tbody>
+                    <tbody id="journal-body">
+                        </tbody>
                 </table>
             </div>
         </section>
 
-        <button class="fab-btn" title="Tambah Transaksi">+</button>
+        <button class="fab-btn" onclick="toggleModal()">+</button>
+
+        <div id="modal" class="modal">
+            <div class="modal-content">
+                <h2 class="neon-text-small">Input Transaksi Baru</h2>
+                <form id="transaction-form">
+                    <input type="date" id="date" required>
+                    <input type="text" id="desc" placeholder="Keterangan Transaksi" required>
+                    <select id="account-debit"></select>
+                    <select id="account-kredit"></select>
+                    <input type="number" id="nominal" placeholder="Nominal (Rp)" required>
+                    <div class="modal-actions">
+                        <button type="button" onclick="toggleModal()" class="btn-cancel">Batal</button>
+                        <button type="submit" class="btn-save">Simpan ke Firebase</button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
+
+    <script src="app.js"></script>
 </body>
 </html>
