@@ -1,15 +1,16 @@
 {
-  "name": "Neon Accounting PWA",
   "short_name": "NeonAcc",
-  "start_url": "index.html",
-  "display": "standalone",
-  "background_color": "#0d0d0d",
-  "theme_color": "#0ff",
+  "name": "Neon Accounting - The Moments",
   "icons": [
     {
-      "src": "https://cdn-icons-png.flaticon.com/512/1041/1041916.png",
-      "sizes": "512x512",
-      "type": "image/png"
+      "src": "icon-192.png",
+      "type": "image/png",
+      "sizes": "192x192"
     }
-  ]
+  ],
+  "start_url": "./index.html",
+  "background_color": "#0a0a0b",
+  "display": "standalone",
+  "scope": "./",
+  "theme_color": "#00f3ff"
 }
