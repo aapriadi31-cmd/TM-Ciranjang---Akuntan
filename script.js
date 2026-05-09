@@ -1,6 +1,113 @@
-const pendapatan = transactions.filter(t => t.code.startsWith('4')).reduce((s, t) => s + Math.abs(t.amount), 0);
-const hpp = transactions.filter(t => t.code.startsWith('5')).reduce((s, t) => s + Math.abs(t.amount), 0);
-const beban = transactions.filter(t => t.code.startsWith('6')).reduce((s, t) => s + Math.abs(t.amount), 0);
+let transactions = [];
 
-const labaKotor = pendapatan - hpp;
-const labaBersih = labaKotor - beban;
+export function initApp() {
+    listenToCloud();
+    document.getElementById('btn-simpan').addEventListener('click', addTransaction);
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('transaction-date').value = today;
+}
+
+function listenToCloud() {
+    const { db, fs } = window;
+    const q = fs.query(fs.collection(db, "transactions"), fs.orderBy("date", "desc"));
+    
+    fs.onSnapshot(q, (snapshot) => {
+        transactions = [];
+        snapshot.forEach((doc) => {
+            transactions.push({ docId: doc.id, ...doc.data() });
+        });
+        updateUI();
+    });
+}
+
+async function addTransaction() {
+    const { db, fs } = window;
+    const desc = document.getElementById('desc').value;
+    const date = document.getElementById('transaction-date').value;
+    const amount = parseFloat(document.getElementById('amount').value);
+    const type = document.getElementById('type').value;
+
+    if (!desc || isNaN(amount) || !date) return alert('Lengkapi semua data!');
+
+    try {
+        await fs.addDoc(fs.collection(db, "transactions"), {
+            id: Date.now(),
+            desc: desc,
+            date: date,
+            amount: type === 'expense' ? -Math.abs(amount) : Math.abs(amount)
+        });
+        document.getElementById('desc').value = '';
+        document.getElementById('amount').value = '';
+    } catch (e) {
+        alert("Gagal koneksi Cloud: " + e);
+    }
+}
+
+window.deleteTransaction = async function(docId) {
+    if (confirm('Hapus permanen dari cloud?')) {
+        const { db, fs } = window;
+        await fs.deleteDoc(fs.doc(db, "transactions", docId));
+    }
+}
+
+window.showPage = function(pageId, reportType = '') {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById('page-' + pageId).classList.add('active');
+    if (reportType) renderReport(reportType);
+}
+
+function updateUI() {
+    const list = document.getElementById('transaction-list');
+    const balanceDisplay = document.getElementById('total-balance');
+    let total = 0;
+    list.innerHTML = '';
+
+    transactions.forEach((t) => {
+        total += t.amount;
+        const li = document.createElement('li');
+        li.className = "transaction-item";
+        li.style.borderLeft = t.amount < 0 ? '4px solid #ff0055' : '4px solid #00ff88';
+        li.innerHTML = `
+            <div style="flex:1"><strong>${t.desc}</strong><br><small>${t.date}</small></div>
+            <div style="display:flex; align-items:center">
+                <span style="color:${t.amount < 0 ? '#ff0055' : '#00ff88'}">
+                    Rp ${Math.abs(t.amount).toLocaleString()}
+                </span>
+                <button onclick="deleteTransaction('${t.docId}')" class="delete-btn">🗑️</button>
+            </div>`;
+        list.appendChild(li);
+    });
+    balanceDisplay.innerText = `Rp ${total.toLocaleString()}`;
+}
+
+function renderReport(type) {
+    const container = document.getElementById('report-container');
+    const title = document.getElementById('report-title');
+    let html = '';
+
+    const sortedData = [...transactions].sort((a,b) => new Date(a.date) - new Date(b.date));
+
+    if (type === 'jurnal') {
+        title.innerText = "JURNAL TRANSAKSI";
+        html = `<table><tr><th>Tgl</th><th>Ket</th><th>Nominal</th></tr>`;
+        sortedData.forEach(t => {
+            html += `<tr><td>${t.date}</td><td>${t.desc}</td><td style="text-align:right">${t.amount.toLocaleString()}</td></tr>`;
+        });
+        html += `</table>`;
+    } else if (type === 'labarugi') {
+        title.innerText = "LABA RUGI (PROFIT/LOSS)";
+        const pendapatan = transactions.filter(t => t.amount > 0).reduce((s,t) => s + t.amount, 0);
+        const beban = transactions.filter(t => t.amount < 0).reduce((s,t) => s + Math.abs(t.amount), 0);
+        html = `<div class="balance-card" style="border-color:#f0f">
+            <p>Pendapatan: Rp ${pendapatan.toLocaleString()}</p>
+            <p>Beban/HPP: Rp ${beban.toLocaleString()}</p>
+            <hr><h3 style="color:#0ff">LABA BERSIH: Rp ${(pendapatan - beban).toLocaleString()}</h3>
+        </div>`;
+    } else if (type === 'neraca') {
+        title.innerText = "NERACA (POSISI KEUANGAN)";
+        const kas = transactions.reduce((s,t) => s + t.amount, 0);
+        html = `<table><tr><th colspan="2">AKTIVA</th></tr><tr><td>Kas & Bank</td><td style="text-align:right">Rp ${kas.toLocaleString()}</td></tr>
+                <tr><th colspan="2">PASIVA</th></tr><tr><td>Modal + Laba</td><td style="text-align:right">Rp ${kas.toLocaleString()}</td></tr></table>`;
+    }
+    container.innerHTML = html;
+}
